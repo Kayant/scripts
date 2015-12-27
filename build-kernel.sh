@@ -8,7 +8,7 @@
 # And the internet for filling in else where
 
 # Thanks to RolanDroid for the introduction
-# Credit also to DespairFactor for some parameters 
+# Credit also to DespairFactor for some parameters
 # https://github.com/DespairFactor/angler/blob/6.0.1/despair-build.sh
 
 # Prepare output customization commands - Start
@@ -247,7 +247,7 @@ fi
 }
 
 rescript(){
-exec /home/kayant/Kernels/build-kernel.sh
+exec /home/kayant/Github/scripts/build-kernel.sh
 }
 
 # Misc - End
