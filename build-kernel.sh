@@ -188,10 +188,10 @@ echo "o) Optimus"
 echo "h) Hurtsky"
 read -p "Choice: " -n 1 -s ziploc
 case "$ziploc" in
-	o) cp $ZIMAGE_DIR/$KERNEL $Optimus_REPACK_DIR; cd $Optimus_REPACK_DIR
+	o) cp $ZIMAGE_DIR/$KERNEL $Optimus_REPACK_DIR/zImage; cd $Optimus_REPACK_DIR
  		zip -r9 $zipfile * .zip &> /dev/null; \
 		mv $zipfile $ZIP_MOVE &> /dev/null; cd $KERNEL_DIR &> /dev/null;;
-	h) cp $ZIMAGE_DIR/$KERNEL $Hurtsky_REPACK_DIR; cd $Hurtsky_REPACK_DIR
+	h) cp $ZIMAGE_DIR/$KERNEL $Hurtsky_REPACK_DIR/zImage; cd $Hurtsky_REPACK_DIR
  		zip -r9 $zipfile * .zip &> /dev/null; \
 		mv $zipfile $ZIP_MOVE &> /dev/null; cd $KERNEL_DIR &> /dev/null;;
 	*) echo "$ziploc - This option is not valid"; sleep .5;;
