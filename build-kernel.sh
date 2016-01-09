@@ -51,7 +51,8 @@ fi
 }
 
 # Stuff
-KERNEL="zImage-dtb"
+KERNEL="zImage"
+DTBIMAGE="dtb"
 KERNEL_DIR="/home/kayant/Kernels/android_kernel_motorola_msm8226"
 RESOURCE_DIR="$KERNEL_DIR/.."
 Optimus_ANYKERNEL_DIR="$RESOURCE_DIR/Optimus-AnyKernel2"
@@ -188,10 +189,10 @@ echo "o) Optimus"
 echo "h) Hurtsky"
 read -p "Choice: " -n 1 -s ziploc
 case "$ziploc" in
-	o) cp $ZIMAGE_DIR/$KERNEL $Optimus_REPACK_DIR/zImage; cd $Optimus_REPACK_DIR
+	o) cp $ZIMAGE_DIR/$KERNEL $Optimus_REPACK_DIR; cd $Optimus_REPACK_DIR
  		zip -r9 $zipfile * .zip &> /dev/null; \
 		mv $zipfile $ZIP_MOVE &> /dev/null; cd $KERNEL_DIR &> /dev/null;;
-	h) cp $ZIMAGE_DIR/$KERNEL $Hurtsky_REPACK_DIR/zImage; cd $Hurtsky_REPACK_DIR
+	h) cp $ZIMAGE_DIR/$KERNEL $Hurtsky_REPACK_DIR; cd $Hurtsky_REPACK_DIR
  		zip -r9 $zipfile * .zip &> /dev/null; \
 		mv $zipfile $ZIP_MOVE &> /dev/null; cd $KERNEL_DIR &> /dev/null;;
 	*) echo "$ziploc - This option is not valid"; sleep .5;;
@@ -200,6 +201,16 @@ zippackagecheck="Done"
 unset cleanzipcheck
 }
 # Zip Process - End
+
+# Make dtb
+make_dtb() {
+if [ $customkernel == "Optimus-Kernel" ]; then
+$Optimus_REPACK_DIR/tools/dtbToolCM --force-v2 -o $Optimus_REPACK_DIR/$DTBIMAGE -s 2048 -p $KERNEL_DIR/scripts/dtc/ $KERNEL_DIR/arch/arm/boot/ &> /dev/null
+elif [ $customkernel == "Hurtsky-Kernel" ]; then
+$Hurtsky_REPACK_DIR/tools/dtbToolCM --force-v2 -o $Hurtsky_REPACK_DIR/$DTBIMAGE -s 2048 -p $KERNEL_DIR/scripts/dtc/ $KERNEL_DIR/arch/arm/boot/ &> /dev/null
+fi
+}
+# Make dtb - End
 
 # ADB - Start
 
@@ -313,7 +324,7 @@ case $x in
 	4) echo "$x - Checking out branches"; branchcheckout; buildsh;;
 	5) echo "$x - Get the zip version"; getversion; buildsh;;
 	6) echo "$x - Cleaning $customkernel"; cleankernel; buildsh;;
-	7) echo "$x - Building $customkernel"; buildprocess; zippackage; buildsh;;
+	7) echo "$x - Building $customkernel"; buildprocess; make_dtb; zippackage; buildsh;;
 	8) if [ -f $ZIMAGE_DIR/$KERNEL ]; then
 		echo "$x - Ziping $customkernel"; zippackage; buildsh
 	else
