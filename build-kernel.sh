@@ -76,7 +76,7 @@ read -p "Choice: " -n 1 -s zipclean
 case "$zipclean" in
 	y) echo "Cleaning Releases Directory..."; rm -rf $ZIP_MOVE/*.zip;;
 	n) echo "Kernel zips were not cleaned";;
-	r) echo "Zimages were deleted"; rm -rf $Hurtsky_REPACK_DIR/$KERNEL; rm -rf $Optimus_REPACK_DIR/$KERNEL;
+	r) echo "Zimages were deleted"; rm -rf $Hurtsky_REPACK_DIR/$KERNEL $Hurtsky_REPACK_DIR/$DTBIMAGE; rm -rf $Optimus_REPACK_DIR/$KERNEL $Optimus_REPACK_DIR/$DTBIMAGE;
 esac
 cleanzipcheck="Done"
 unset zippackagecheck
@@ -99,11 +99,13 @@ maindevice() {
 echo "-${bldcya}Kernels${txtrst}-"
 echo "o) Optimus Kernel"
 echo "h) Hurtsky Kernel"
+echo "s) Hurtsky Simple Kernel"
 unset errorchoice
 read -p "Choice: " -n 1 -s kerchoice
 case "$kerchoice" in
 	o) defconfig="peregrine_defconfig";;
 	h) defconfig="hurtsky_peg_defconfig";;
+	s) defconfig="peregrine_defconfig";;
 	*) echo "$kerchoice - This option is not valid"; sleep .5; errorchoice="ON";;
 esac
 if ! [ "$errorchoice" == "ON" ]; then
@@ -131,10 +133,12 @@ cd $KERNEL_DIR
 echo "What git branch do you want to build?"
 echo "o) Optimus 6.0"
 echo "h) Hurtsky Hybrid"
+echo "s) Hurtsky Simpler"
 read -p "Choice: " -n 1 -s gitbranch
 case "$gitbranch" in
 	o) git checkout optimus-M; customkernel=Optimus-Kernel;;
 	h) git checkout HurtSkyHybrid; customkernel=Hurtsky-Kernel;;
+	s) git checkout HurtSkySimpler; customkernel=HurtskySimpler-Kernel;;
 	*) echo "$gitbranch - This option is not valid"; sleep .5;;
 esac
 }
@@ -208,6 +212,8 @@ if [ $customkernel == "Optimus-Kernel" ]; then
 $Optimus_REPACK_DIR/tools/dtbToolCM --force-v2 -o $Optimus_REPACK_DIR/$DTBIMAGE -s 2048 -p $KERNEL_DIR/scripts/dtc/ $KERNEL_DIR/arch/arm/boot/ &> /dev/null
 elif [ $customkernel == "Hurtsky-Kernel" ]; then
 $Hurtsky_REPACK_DIR/tools/dtbToolCM --force-v2 -o $Hurtsky_REPACK_DIR/$DTBIMAGE -s 2048 -p $KERNEL_DIR/scripts/dtc/ $KERNEL_DIR/arch/arm/boot/ &> /dev/null
+else [ $customkernel == "HurtskySimpler-Kernel" ]
+$Hurtsky_REPACK_DIR/tools/dtbToolCM --force-v2 -o $Hurtsky_REPACK_DIR/$DTBIMAGE -s 2048 -p $KERNEL_DIR/scripts/dtc/ $KERNEL_DIR/arch/arm/boot/ &> /dev/null
 fi
 }
 # Make dtb - End
@@ -248,12 +254,15 @@ echo "${bldyel}Zip Saved to Releases/$zipfile${txtrst}"
 getversion(){
 echo "Optimus versions start with R. e.g R51 "
 echo "Hurtsky versions start with Hs. e.g Hs6 "
+echo "HurtSkySimpler versions start with V. e.g V4 "
 read -p "Please enter the kernel version: " versionconf
 echo "$versionconf"
 if [ "$gitbranch" == "o" ]; then
 zipfile="Optimus-M-Peregrine-$versionconf.zip"
 elif [ "$gitbranch" == "h" ]; then
 zipfile="Hurtsky$versionconf-Peregrine.zip"
+else [ "$gitbranch" == "h_s" ]
+zipfile="HurtSkySimpler$versionconf-Peregrine.zip"
 fi
 }
 
