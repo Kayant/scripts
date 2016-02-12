@@ -56,8 +56,10 @@ DTBIMAGE="dtb"
 KERNEL_DIR="/home/kayant/Kernels/android_kernel_motorola_msm8226"
 RESOURCE_DIR="$KERNEL_DIR/.."
 Hurtsky_ANYKERNEL_DIR="$RESOURCE_DIR/Hurtsky-AnyKernel2"
+Hurtsky_Simpler_ANYKERNEL_DIR="$RESOURCE_DIR/Hurtsky-AnyKernel2-Simpler"
 TOOLCHAIN_DIR="$RESOURCE_DIR/Toolchains"
 Hurtsky_REPACK_DIR="$Hurtsky_ANYKERNEL_DIR"
+Hurtsky_Simpler_REPACK_DIR="$Hurtsky_Simpler_ANYKERNEL_DIR"
 ZIP_MOVE="$RESOURCE_DIR/Releases"
 ZIMAGE_DIR="$KERNEL_DIR/arch/arm/boot"
 
@@ -74,7 +76,7 @@ read -p "Choice: " -n 1 -s zipclean
 case "$zipclean" in
 	y) echo "Cleaning Releases Directory..."; rm -rf $ZIP_MOVE/*.zip;;
 	n) echo "Kernel zips were not cleaned";;
-	r) echo "Zimages were deleted"; rm -rf $Hurtsky_REPACK_DIR/$KERNEL $Hurtsky_REPACK_DIR/$DTBIMAGE; rm -rf $Optimus_REPACK_DIR/$KERNEL $Optimus_REPACK_DIR/$DTBIMAGE;
+	r) echo "Zimages were deleted"; rm -rf $Hurtsky_REPACK_DIR/$KERNEL $Hurtsky_REPACK_DIR/$DTBIMAGE; rm -rf $Hurtsky_Simpler_REPACK_DIR/$KERNEL $Hurtsky_Simpler_REPACK_DIR/$DTBIMAGE;
 esac
 cleanzipcheck="Done"
 unset zippackagecheck
@@ -184,9 +186,13 @@ zippackage() {
 echo "$zipfile to be built"
 echo "What zip do you want pack?"
 echo "h) Hurtsky"
+echo "s) Hurtsky Simpler"
 read -p "Choice: " -n 1 -s ziploc
 case "$ziploc" in
 	h) cp $ZIMAGE_DIR/$KERNEL $Hurtsky_REPACK_DIR; cd $Hurtsky_REPACK_DIR
+ 		zip -r9 $zipfile * .zip &> /dev/null; \
+		mv $zipfile $ZIP_MOVE &> /dev/null; cd $KERNEL_DIR &> /dev/null;;
+	s) cp $ZIMAGE_DIR/$KERNEL $Hurtsky_Simpler_REPACK_DIR; cd $Hurtsky_Simpler_REPACK_DIR
  		zip -r9 $zipfile * .zip &> /dev/null; \
 		mv $zipfile $ZIP_MOVE &> /dev/null; cd $KERNEL_DIR &> /dev/null;;
 	*) echo "$ziploc - This option is not valid"; sleep .5;;
@@ -201,7 +207,7 @@ make_dtb() {
 if [ $customkernel == "Hurtsky-Kernel" ]; then
 $Hurtsky_REPACK_DIR/tools/dtbToolCM --force-v2 -o $Hurtsky_REPACK_DIR/$DTBIMAGE -s 2048 -p $KERNEL_DIR/scripts/dtc/ $KERNEL_DIR/arch/arm/boot/ &> /dev/null
 else [ $customkernel == "HurtskySimpler-Kernel" ]
-$Hurtsky_REPACK_DIR/tools/dtbToolCM --force-v2 -o $Hurtsky_REPACK_DIR/$DTBIMAGE -s 2048 -p $KERNEL_DIR/scripts/dtc/ $KERNEL_DIR/arch/arm/boot/ &> /dev/null
+$Hurtsky_Simpler_REPACK_DIR/tools/dtbToolCM --force-v2 -o $Hurtsky_Simpler_REPACK_DIR/$DTBIMAGE -s 2048 -p $KERNEL_DIR/scripts/dtc/ $KERNEL_DIR/arch/arm/boot/ &> /dev/null
 fi
 }
 # Make dtb - End
