@@ -55,7 +55,7 @@ KERNEL="zImage"
 DTBIMAGE="dtb"
 KERNEL_DIR="/home/kayant/Kernels/android_kernel_motorola_msm8226"
 RESOURCE_DIR="$KERNEL_DIR/.."
-Hurtsky_ANYKERNEL_DIR="$RESOURCE_DIR/Hurtsky-AnyKernel2"
+Hurtsky_ANYKERNEL_DIR="$RESOURCE_DIR/Hurtsky-AnyKernel2-Ext"
 Hurtsky_Simpler_ANYKERNEL_DIR="$RESOURCE_DIR/Hurtsky-AnyKernel2-Simpler"
 TOOLCHAIN_DIR="$RESOURCE_DIR/Toolchains"
 Hurtsky_REPACK_DIR="$Hurtsky_ANYKERNEL_DIR"
@@ -97,12 +97,12 @@ unset buildprocesscheck BUILDTIME
 
 maindevice() {
 echo "-${bldcya}Kernels${txtrst}-"
-echo "h) Hurtsky Kernel"
+echo "e) Hurtsky Ext Kernel"
 echo "s) Hurtsky Simple Kernel"
 unset errorchoice
 read -p "Choice: " -n 1 -s kerchoice
 case "$kerchoice" in
-	h) defconfig="hurtsky_peg_defconfig";;
+	e) defconfig="hurtsky_peg_defconfig";;
 	s) defconfig="peregrine_defconfig";;
 	*) echo "$kerchoice - This option is not valid"; sleep .5; errorchoice="ON";;
 esac
@@ -117,10 +117,12 @@ manualtoolchain() {
 cd $KERNEL_DIR
 echo "What toolchain do you want?"
 echo "a) Arch TC"
+echo "l) Linaro TC"
 echo "u) UBER TC"
 read -p "Choice: " -n 1 -s toolchainloc
 case "$toolchainloc" in
 	a) export CROSS_COMPILE=$TOOLCHAIN_DIR/Archtoolchain/bin/arm-linux-androideabi-;;
+	l) export CROSS_COMPILE=$TOOLCHAIN_DIR/linaro/out/linaro-arm-eabi-4.9-cortex-a7/bin/arm-eabi-;;
 	u) export CROSS_COMPILE=$TOOLCHAIN_DIR/UBERTC/out/arm-eabi-5.3-cortex-a7/bin/arm-eabi-;;
 	*) echo "$toolchainloc - This option is not valid"; sleep .5;;
 esac
@@ -129,11 +131,11 @@ esac
 branchcheckout(){
 cd $KERNEL_DIR
 echo "What git branch do you want to build?"
-echo "h) Hurtsky Hybrid"
+echo "h) Hurtsky Hybrid Ext"
 echo "s) Hurtsky Simpler"
 read -p "Choice: " -n 1 -s gitbranch
 case "$gitbranch" in
-	h) git checkout HurtSkyHybrid; customkernel=Hurtsky-Kernel;;
+	h) git checkout HurtSkyHybrid; customkernel=HurtskyExt-Kernel;;
 	s) git checkout HurtSkySimpler; customkernel=HurtskySimpler-Kernel;;
 	*) echo "$gitbranch - This option is not valid"; sleep .5;;
 esac
@@ -204,7 +206,7 @@ unset cleanzipcheck
 
 # Make dtb
 make_dtb() {
-if [ $customkernel == "Hurtsky-Kernel" ]; then
+if [ $customkernel == "HurtskyExt-Kernel" ]; then
 $Hurtsky_REPACK_DIR/tools/dtbToolCM --force-v2 -o $Hurtsky_REPACK_DIR/$DTBIMAGE -s 2048 -p $KERNEL_DIR/scripts/dtc/ $KERNEL_DIR/arch/arm/boot/ &> /dev/null
 else [ $customkernel == "HurtskySimpler-Kernel" ]
 $Hurtsky_Simpler_REPACK_DIR/tools/dtbToolCM --force-v2 -o $Hurtsky_Simpler_REPACK_DIR/$DTBIMAGE -s 2048 -p $KERNEL_DIR/scripts/dtc/ $KERNEL_DIR/arch/arm/boot/ &> /dev/null
@@ -246,12 +248,12 @@ echo "${bldyel}Zip Saved to Releases/$zipfile${txtrst}"
 }
 
 getversion(){
-echo "Hurtsky versions start with Hs. e.g Hs6 "
+echo "HurtskyExt versions start with Hs. e.g Hs6 "
 echo "HurtSkySimpler versions start with V. e.g V4 "
 read -p "Please enter the kernel version: " versionconf
 echo "$versionconf"
 if [ "$gitbranch" == "h" ]; then
-zipfile="Hurtsky$versionconf-Peregrine.zip"
+zipfile="HurtskyExt$versionconf-Peregrine.zip"
 else [ "$gitbranch" == "h_s" ]
 zipfile="HurtSkySimpler$versionconf-Peregrine.zip"
 fi
