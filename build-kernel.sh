@@ -135,7 +135,7 @@ echo "h) Hurtsky Hybrid Ext"
 echo "s) Hurtsky Simpler"
 read -p "Choice: " -n 1 -s gitbranch
 case "$gitbranch" in
-	h) git checkout HurtSkyHybrid; customkernel=HurtskyExt-Kernel;;
+	h) git checkout HurtSkyHybrid; customkernel=HurtskyExp-Kernel;;
 	s) git checkout HurtSkySimpler; customkernel=HurtskySimpler-Kernel;;
 	*) echo "$gitbranch - This option is not valid"; sleep .5;;
 esac
@@ -206,7 +206,7 @@ unset cleanzipcheck
 
 # Make dtb
 make_dtb() {
-if [ $customkernel == "HurtskyExt-Kernel" ]; then
+if [ $customkernel == "HurtskyExp-Kernel" ]; then
 $Hurtsky_REPACK_DIR/tools/dtbToolCM --force-v2 -o $Hurtsky_REPACK_DIR/$DTBIMAGE -s 2048 -p $KERNEL_DIR/scripts/dtc/ $KERNEL_DIR/arch/arm/boot/ &> /dev/null
 else [ $customkernel == "HurtskySimpler-Kernel" ]
 $Hurtsky_Simpler_REPACK_DIR/tools/dtbToolCM --force-v2 -o $Hurtsky_Simpler_REPACK_DIR/$DTBIMAGE -s 2048 -p $KERNEL_DIR/scripts/dtc/ $KERNEL_DIR/arch/arm/boot/ &> /dev/null
@@ -248,12 +248,12 @@ echo "${bldyel}Zip Saved to Releases/$zipfile${txtrst}"
 }
 
 getversion(){
-echo "HurtskyExt versions start with Hs. e.g Hs6 "
+echo "HurtskyExp versions need a number e.g 6 "
 echo "HurtSkySimpler versions start with V. e.g V4 "
 read -p "Please enter the kernel version: " versionconf
 echo "$versionconf"
 if [ "$gitbranch" == "h" ]; then
-zipfile="HurtskyExt$versionconf-Peregrine.zip"
+zipfile="HurtskyExp$versionconf-Peregrine.zip"
 else [ "$gitbranch" == "h_s" ]
 zipfile="HurtSkySimpler$versionconf-Peregrine.zip"
 fi
